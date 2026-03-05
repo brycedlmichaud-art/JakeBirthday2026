@@ -15,10 +15,11 @@
         .gothic-text { font-family: 'OldLondon', serif; }
         
         #friend-name {
-            font-size: clamp(3.5rem, 12vw, 9rem);
+            font-size: clamp(2rem, 10vw, 9rem);
             line-height: 1.1;
             width: 90%;
             margin: 0 auto;
+            overflow-wrap: break-word;
         }
 
         #enter-btn {
@@ -68,14 +69,14 @@
 
     <div class="lightning-flash" id="flash"></div>
 
-    <div id="youtube-audio" class="hidden">
+    <div id="youtube-audio" class="absolute opacity-0 pointer-events-none">
         <iframe id="audio-player" 
                 src="https://www.youtube.com/embed/7P7imLdIetg?enablejsapi=1&start=3" 
                 allow="autoplay">
         </iframe>
     </div>
 
-    <div id="youtube-sfx" class="hidden">
+    <div id="youtube-sfx" class="absolute opacity-0 pointer-events-none">
         <iframe id="sfx-player" 
                 src="https://www.youtube.com/embed/v3H_X_q6CDE?enablejsapi=1&autoplay=1&mute=0" 
                 allow="autoplay">
@@ -233,8 +234,8 @@
                 });
 
                 const finalTl = gsap.timeline();
-                finalTl.to("#final-message .fire-word", { opacity: 1, scale: 1, duration: 1.2, stagger: 0.6, ease: "back.out(1.7)", startAt: { scale: 4, filter: "blur(15px)" } });
-                finalTl.to("#final-age .fire-word", { opacity: 1, scale: 1, duration: 2, ease: "elastic.out(1, 0.4)", startAt: { scale: 0.1, filter: "blur(20px)" } }, "+=0.5");
+                finalTl.to("#final-message .fire-word", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.2, stagger: 0.6, ease: "back.out(1.7)", startAt: { scale: 4, filter: "blur(15px)" } });
+                finalTl.to("#final-age .fire-word", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 2, ease: "elastic.out(1, 0.4)", startAt: { scale: 0.1, filter: "blur(20px)" } }, "+=0.5");
             }});
         }
     </script>
