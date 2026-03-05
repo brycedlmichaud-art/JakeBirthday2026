@@ -45,12 +45,7 @@
             pointer-events: none;
             z-index: 30;
         }
-        .fire-char {
-            font-family: 'OldLondon', serif;
-            transform-origin: bottom center;
-            filter: blur(0.5px);
-        }
-        .fire-word {
+        .fire-char, .fire-word {
             font-family: 'OldLondon', serif;
             transform-origin: center center;
             display: inline-block;
@@ -104,12 +99,12 @@
     </div>
 
     <script>
+        // --- SCENE 1 SETUP ---
         const nameElement = document.getElementById('friend-name');
         const text = nameElement.innerText.trim();
         nameElement.innerHTML = text.split('').map(char => `<span class="letter">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
 
         const tl = gsap.timeline();
-
         tl.to(".letter", { opacity: 1, filter: "blur(0px)", duration: 1.5, stagger: 0.15, ease: "power2.out" });
         tl.to("#enter-btn", { opacity: 1, y: -10, duration: 2, ease: "sine.inOut" }, "-=0.5");
 
@@ -120,6 +115,7 @@
         }
         triggerLightning();
 
+        // --- TRANSITION TO SCENE 2 ---
         document.getElementById('enter-btn').addEventListener('click', () => {
             document.getElementById('audio-player').contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
             gsap.to("#intro-screen", { opacity: 0, duration: 1.5, onComplete: startScene2 });
@@ -128,13 +124,16 @@
         function startScene2() {
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('scene-2').classList.remove('hidden');
+
             const tl2 = gsap.timeline();
             tl2.to("#jake-img", { bottom: "0%", duration: 3, ease: "power2.out" });
             tl2.to("#bryce-img", { opacity: 0.6, duration: 5, ease: "sine.inOut" }, "-=1.5");
             tl2.to("#bryce-speech", { opacity: 1, duration: 2, ease: "power2.out", onComplete: startSpeechSequence }, "-=2.5");
+            
             gsap.to("#bryce-img", { scale: 1.03, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
         }
 
+        // --- SPEECH & FLOATING ---
         function startSpeechSequence() {
             const sentences = [
                 "Behold, for the veil grows thin on the anniversary of thy naming.",
@@ -147,7 +146,6 @@
 
             function showNext() {
                 if (index >= sentences.length) {
-                    // FINALE: Fade out Bryce/Speech and bring Jake to Center
                     gsap.to("#bryce-img", { opacity: 0, duration: 2 });
                     gsap.to("#bryce-speech", { opacity: 0, duration: 1 });
                     
@@ -155,7 +153,7 @@
                         left: "50%",
                         bottom: "20%", 
                         xPercent: -50,
-                        y: 0, // Reset floating 'y' for perfect centering
+                        y: 0, 
                         scale: 1.5,
                         duration: 3,
                         ease: "power2.inOut",
@@ -166,7 +164,7 @@
                 
                 textEl.innerText = sentences[index];
                 
-                // Rise Jake slightly per sentence (4% increments) [cite: 2025-11-06]
+                // 4% increments [cite: 2025-11-06]
                 gsap.to("#jake-img", {
                     y: "-=" + (window.innerHeight * 0.04), 
                     duration: 3,
@@ -182,8 +180,9 @@
             showNext();
         }
 
+        // --- THE ANIME POWER UP ---
         function summonMagicalFlames() {
-            // TRIGGER THE SFX
+            // TRIGGER THE SFX PLAYER
             document.getElementById('sfx-player').contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
 
             const jake = document.getElementById('jake-img');
@@ -221,6 +220,7 @@
             setTimeout(startFinalScene, 6500);
         }
 
+        // --- FINAL BIRTHDAY REVEAL ---
         function startFinalScene() {
             gsap.to("#scene-2", { opacity: 0, duration: 2, onComplete: () => {
                 document.getElementById('scene-2').classList.add('hidden');
@@ -231,15 +231,12 @@
                 const ageContainer = document.getElementById('final-age');
                 const text = "Happy Birthday my beautiful friend";
                 
-                // Create word elements
                 msgContainer.innerHTML = text.split(' ').map(word => 
                     `<span class="fire-word text-5xl md:text-7xl opacity-0">${word}</span>`
                 ).join('');
 
-                // Create Age element
                 ageContainer.innerHTML = `<span class="fire-word text-8xl md:text-9xl opacity-0">29</span>`;
 
-                // Continuous fire flickering loop
                 gsap.to(".fire-word", {
                     color: "#ffff00", 
                     textShadow: "0 0 5px #fff, 0 -5px 10px #ffeb3b, 0 -10px 20px #ff9800, 0 -15px 30px #f44336",
@@ -249,22 +246,18 @@
                     stagger: { each: 0.1, from: "random" }
                 });
 
-                // Sequence: Words appear one by one, then the number
-                const tl = gsap.timeline();
-                
-                // Animate words
-                tl.to("#final-message .fire-word", {
+                const finalTl = gsap.timeline();
+                finalTl.to("#final-message .fire-word", {
                     opacity: 1,
                     scale: 1,
                     filter: "brightness(1) blur(0px)",
                     duration: 1.5,
-                    stagger: 0.8, // One word at a time
+                    stagger: 0.8,
                     ease: "power2.out",
                     startAt: { scale: 1.5, filter: "brightness(3) blur(5px)", color: "#fff" }
                 });
 
-                // Animate 29
-                tl.to("#final-age .fire-word", {
+                finalTl.to("#final-age .fire-word", {
                     opacity: 1,
                     scale: 1,
                     filter: "brightness(1) blur(0px)",
